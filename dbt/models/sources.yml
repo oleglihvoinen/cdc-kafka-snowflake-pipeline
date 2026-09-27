@@ -1,0 +1,12 @@
+version: 2
+sources:
+  - name: raw_cdc
+    database: CDC_DEMO
+    schema: RAW_CDC
+    tables:
+      - name: order_events
+models:
+  - name: fct_orders_current
+    columns:
+      - name: order_id
+        tests: [unique, not_null]
