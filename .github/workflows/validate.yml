@@ -1,0 +1,9 @@
+name: validate
+on: [push, pull_request]
+jobs:
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose config >/dev/null
+      - run: python -m json.tool debezium/postgres-connector.json >/dev/null
