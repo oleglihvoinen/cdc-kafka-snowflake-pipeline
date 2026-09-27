@@ -1,24 +1,37 @@
 # CDC Kafka Snowflake Pipeline
 
-An end-to-end reference architecture for **change data capture (CDC)** from PostgreSQL into an event-driven analytical platform.
+An end-to-end **change data capture architecture** that propagates PostgreSQL changes through Debezium and Kafka into a Snowflake/dbt analytical pipeline.
 
 ![Architecture](https://raw.githubusercontent.com/oleglihvoinen/oleglihvoinen.github.io/main/assets/architecture/cdc-kafka-snowflake-pipeline.png)
 
-## Flow
-PostgreSQL WAL → Debezium → Kafka topics → Snowflake RAW event storage → dbt staging/current-state models → analytics.
+## Executive summary
 
-## Included
-- local PostgreSQL + Kafka + Debezium environment with Docker Compose
-- sample commerce tables and data
-- Debezium PostgreSQL connector definition
-- Snowflake raw-event table design retaining Kafka topic/partition/offset metadata
+The pipeline replaces repeated full-table extraction with event-driven change propagation. Inserts, updates and deletes are captured from PostgreSQL WAL, emitted through Debezium into Kafka, retained with lineage metadata in Snowflake RAW storage, and transformed by dbt into typed and consumer-ready current-state models.
+
+## Architecture
+
+PostgreSQL WAL → Debezium → Kafka topics → Snowflake RAW event storage → dbt staging/current-state models → analytics / APIs / AI.
+
+## Included components
+
+- local PostgreSQL + Kafka + Debezium environment using Docker Compose
+- operational customer and order tables with sample data
+- Debezium PostgreSQL connector configuration
+- Snowflake raw-event table retaining topic, partition and offset metadata
 - dbt staging model for Debezium event envelopes
-- incremental current-state model
-- CI validation of Compose and connector JSON
+- incremental dbt model for current-state order data
+- CI validation for Docker Compose and connector JSON
 
-The local repository demonstrates the CDC source/streaming side directly. Snowflake is a downstream integration point and requires external credentials/services.
+## Reliability and lineage
 
-## Why this matters
-CDC avoids repeated full-table extracts, captures inserts/updates/deletes as events, preserves change history and creates a foundation for near-real-time analytical models and multiple independent consumers.
+Kafka offsets provide a durable event position, while Snowflake RAW retains source event metadata for traceability, replay analysis, deduplication and idempotency controls. The transformation boundary keeps immutable change history separate from consumer-facing state.
 
-**Technologies:** PostgreSQL · WAL · Debezium · Apache Kafka · Docker Compose · Snowflake · dbt · SQL · CDC · event streaming
+## Enterprise hardening
+
+A production deployment would add managed connector configuration, Schema Registry, SASL/TLS, secret management, connector monitoring, dead-letter handling, schema-evolution controls, freshness SLAs, end-to-end observability and stronger idempotency guarantees.
+
+## Repository scope
+
+The PostgreSQL/Kafka/Debezium side is runnable locally. Snowflake is the defined downstream integration boundary and requires environment-specific credentials and infrastructure.
+
+**Technologies:** PostgreSQL · WAL · Debezium · Apache Kafka · Docker Compose · Snowflake · dbt · SQL · CDC · incremental ELT · event streaming
