@@ -2,6 +2,8 @@
 
 An end-to-end reference architecture for **change data capture (CDC)** from PostgreSQL into an event-driven analytical platform.
 
+![Architecture](https://raw.githubusercontent.com/oleglihvoinen/oleglihvoinen.github.io/main/assets/architecture/cdc-kafka-snowflake-pipeline.png)
+
 ## Flow
 PostgreSQL WAL → Debezium → Kafka topics → Snowflake RAW event storage → dbt staging/current-state models → analytics.
 
