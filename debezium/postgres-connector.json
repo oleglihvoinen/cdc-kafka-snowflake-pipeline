@@ -1,0 +1,15 @@
+{
+  "name": "commerce-postgres-cdc",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "postgres",
+    "database.port": "5432",
+    "database.user": "app",
+    "database.password": "app",
+    "database.dbname": "commerce",
+    "topic.prefix": "commerce",
+    "plugin.name": "pgoutput",
+    "table.include.list": "public.customers,public.orders",
+    "tombstones.on.delete": "true"
+  }
+}
