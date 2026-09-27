@@ -4,7 +4,7 @@ An end-to-end **change data capture architecture** that propagates PostgreSQL ch
 
 ![Architecture](https://raw.githubusercontent.com/oleglihvoinen/oleglihvoinen.github.io/main/assets/architecture/cdc-kafka-snowflake-pipeline.png)
 
-## Executive summary
+## Summary
 
 The pipeline replaces repeated full-table extraction with event-driven change propagation. Inserts, updates and deletes are captured from PostgreSQL WAL, emitted through Debezium into Kafka, retained with lineage metadata in Snowflake RAW storage, and transformed by dbt into typed and consumer-ready current-state models.
 
