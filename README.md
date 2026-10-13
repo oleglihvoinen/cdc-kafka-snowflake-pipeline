@@ -18,15 +18,15 @@ PostgreSQL WAL → Debezium → Kafka → Snowflake RAW event history → dbt ty
 - delete-aware staging
 - source LSN, event timestamp, Kafka partition and offset lineage
 - deterministic event identity
-- bounded replay lookback in dbt incremental processing
-- latest-state reconstruction ordered by source position
+- delete-correct current-state view reconstructed from immutable event history
+- production Snowflake MERGE pattern with explicit DELETE handling and source-position checks
 - Python CDC reducer modeling duplicates, out-of-order events, deletes and replay
 - automated correctness tests
 - CI validation for CDC semantics
 
 ## Correctness rules
 
-The current-state layer deliberately does not assume arrival order equals source order. Source LSN and Kafka metadata are retained so older events cannot silently regress newer state. Delete events resolve the business key from the before-image because Debezium's after-image is null for deletes.
+The current-state layer deliberately does not assume arrival order equals source order. Source LSN and Kafka metadata are retained so older events cannot silently regress newer state. Delete events resolve the business key from the before-image because Debezium's after-image is null for deletes. The public dbt current-state model is a delete-correct view over event history; `snowflake/apply_order_cdc.sql` shows the production MERGE pattern when a materialized current-state table is required.
 
 The public Snowflake integration remains a defined boundary and requires environment-specific credentials.
 
